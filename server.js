@@ -1,15 +1,27 @@
 const express = require('express');
-
 const app = express();
-
 const port = process.env.PORT || 3000;
-const express = require('express');
-const db = new split3.Database('./company.db');
 
-app.use(express.json());
+// Database setup
+const mysql = require('mysql');
+const db = mysql.createConnection({
+    host: 'company',
+    user: 'root',
+    password: '',
+    database: 'employee_db'
+});
+
+db.connect((err) => {
+    if (err) {
+        console.error('Error connecting to the database:', err);
+        return;
+    }
+    console.log('Connected to the database');
+});
 
 app.get('/departments', (req, res) => {
-    db.all('SELECT id, name FROM departments', (err, departments) => {
+    const query = 'SELECT id, name FROM departments';
+    db.query(query, (err, departments) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
@@ -18,6 +30,8 @@ app.get('/departments', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+process.on('SIGINT', () => {
+    db.end();
+    console.log('Database connection closed');
+    process.exit();
 });
