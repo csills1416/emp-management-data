@@ -1,73 +1,50 @@
-const express = require('express');
-const mysql = require('mysql');
-const ejs = require('ejs');
-const path = require('path');
-const fs = require('fs');
+const mysql = require('mysql2');
+const inquirer = require('inquirer');
 
-const app = express();
-const PORT = process.env.PORT || 3003;
-
-const db = mysql.createConnection({
-  host: 'company',
-  user: 'root',
-  password: '',
+// Create a MySQL connection
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'company_db',
 });
 
-db.connect(err => {
-  if (err) {
-    console.error('Error connecting to database:', err);
-  } else {
-    console.log('Connected to database');
-    createDatabaseAndTables();
-  }
+// Establish the connection
+connection.connect(err => {
+    if (err) throw err;
+    console.log('Connected to the database.');
+    startApp();
 });
 
-function createDatabaseAndTables() {
-  const schemaSql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
-  db.query(schemaSql, (err, results) => {
-    if (err) {
-      console.error('Error creating tables:', err);
-    } else {
-      console.log('Tables created');
-      populateDatabase();
-    }
+// Define your inquirer prompts and actions
+function startApp() {
+  inquirer
+      .prompt([
+          {
+              type: 'list',
+              name: 'action',
+              message: 'Choose an action:',
+              choices: [
+                  'View all departments',
+                  // Other choices...
+              ],
+          },
+      ])
+      .then(answer => {
+          if (answer.action === 'View all departments') {
+              viewAllDepartments(); // Call the function
+          }
+          // Handle other actions...
+      })
+      .catch(err => console.error(err));
+}
+
+function viewAllDepartments() {
+  connection.query('SELECT * FROM departments', (err, results) => {
+      if (err) throw err;
+      console.table(results);
+      startApp(); // Continue the loop
   });
 }
 
-function populateDatabase() {
-  const seedSql = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf8');
-  db.query(seedSql, (err, results) => {
-    if (err) {
-      console.error('Error populating data:', err);
-    } else {
-      console.log('Data populated');
-      startServer();
-    }
-  });
-}
-
-function startServer() {
-  app.set('view engine', 'ejs');
-  app.set('views', path.join(__dirname, 'views'));
-
-  app.get('/employees', (req, res) => {
-    const query = 'SELECT id, first_name, last_name FROM employees';
-
-    db.query(query, (err, results) => {
-      if (err) {
-        console.error('Error fetching employees:', err);
-        res.status(500).send('Error fetching employees');
-      } else {
-        res.render('employees', { employees: results });
-      }
-    });
-  });
-
-  app.get('/', (req, res) => {
-    res.send('Welcome to the Employee Management System');
-  });
-
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
+// Call the startApp function to initiate the application
