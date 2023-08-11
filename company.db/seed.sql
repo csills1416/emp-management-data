@@ -1,5 +1,4 @@
-USE employees;
-SELECT * FROM employees;
+USE company_db;
 
 INSERT INTO departments (name) VALUES 
 ('Sales'),
@@ -18,8 +17,4 @@ INSERT INTO employees (first_name, last_name, role_id, manager_id, department_id
 ('Mike', 'Chan', 2, 1, 1),      -- Salesperson
 ('Ashley', 'Rodriguez', 3, NULL, 2), -- Lead Engineer
 ('Kevin', 'Tupik', 4, 3, 2),    -- Software Engineer
-('Kimberly', 'Clark', 5, NULL, 3); -- Account Manager
-
-SELECT * FROM departments;
-SELECT * FROM roles;
-SELECT * FROM employees;
+('Kimberly', 'Clark', 5, NULL, 3); -- Account Manager;

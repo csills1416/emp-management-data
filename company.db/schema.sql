@@ -1,7 +1,5 @@
-DROP DATABASE IF EXISTS employees;
-CREATE DATABASE employees;
-
-USE employees;
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
 
 CREATE TABLE IF NOT EXISTS departments (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -27,5 +25,3 @@ CREATE TABLE IF NOT EXISTS employees (
     FOREIGN KEY (manager_id) REFERENCES employees (id),
     FOREIGN KEY (department_id) REFERENCES departments (id)
 );
-
-SELECT * FROM employees;
