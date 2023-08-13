@@ -18,3 +18,4 @@ INSERT INTO employees (first_name, last_name, role_id, manager_id, department_id
 ('Ashley', 'Rodriguez', 3, NULL, 2), -- Lead Engineer
 ('Kevin', 'Tupik', 4, 3, 2),    -- Software Engineer
 ('Kimberly', 'Clark', 5, NULL, 3); -- Account Manager;
+   
